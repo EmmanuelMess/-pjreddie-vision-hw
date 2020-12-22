@@ -83,6 +83,10 @@ void threshold_image(image im, float thresh);
 image *sobel_image(image im);
 image colorize_sobel(image im);
 image smooth_image(image im, float sigma);
+// Mine:
+image mult_image(image a, image b);
+image div_image(image a, image b);
+void insert_channel(image im, image insertion, int channel);
 
 // Harris and Stitching
 image structure_matrix(image im, float sigma);

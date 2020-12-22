@@ -384,6 +384,13 @@ void test_cornerness()
     free_image(gt);
 }
 
+void test_harris() {
+	image im = load_image("data/Rainier1.png");
+	int number;
+	harris_corner_detector(im, 2, 50, 3, &number);
+	free_image(im);
+}
+
 void run_tests()
 {
     //test_matrix();
@@ -408,6 +415,7 @@ void run_tests()
     test_sobel();
     test_structure();
     test_cornerness();
+	test_harris();
     printf("%d tests, %d passed, %d failed\n", tests_total, tests_total-tests_fail, tests_fail);
 }
 
