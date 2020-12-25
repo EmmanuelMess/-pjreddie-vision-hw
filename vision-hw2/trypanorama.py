@@ -67,9 +67,10 @@ def field_panorama():
     pan5 = panorama_image(pan4, im3, thresh=2, iters=50000, inlier_thresh=3)
     save_image(pan5, "field_panorama_5")
 
-draw_corners()
-draw_matches()
-easy_panorama()
-#rainier_panorama()
-#field_panorama()
+if __name__ == '__main__':
+    draw_corners()
+    draw_matches()
+    easy_panorama()
+    rainier_panorama()
+    field_panorama()
 

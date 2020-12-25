@@ -391,6 +391,56 @@ void test_harris() {
 	free_image(im);
 }
 
+void test_match_descriptors() {
+	image im1 = load_image("data/Rainier1.png");
+	image im2 = load_image("data/Rainier2.png");
+	image result = find_and_draw_matches(im1, im2, 2, 50, 3);
+	free_image(im1);
+	free_image(im2);
+	free_image(result);
+}
+
+void test_panorama() {
+	image im1 = load_image("data/Rainier1.png");
+	image im2 = load_image("data/Rainier2.png");
+	image pan = panorama_image(im1, im2, 2, 50, 3, 2, 10000, 30);
+	free_image(im1);
+	free_image(im2);
+	free_image(pan);
+}
+
+void test_panorama2() {
+	image im1 = load_image("data/Rainier1.png");
+	image im2 = load_image("data/Rainier2.png");
+	image pan = panorama_image(im1, im2, 2, 5, 3, 2, 10000, 30);
+	free_image(im1);
+	free_image(im2);
+	free_image(pan);
+}
+
+void test_panorama3() {
+	image im1 = load_image("data/Rainier1.png");
+	image im2 = load_image("data/Rainier2.png");
+	image im3 = load_image("data/Rainier3.png");
+	image im4 = load_image("data/Rainier4.png");
+	image im5 = load_image("data/Rainier5.png");
+	image im6 = load_image("data/Rainier6.png");
+	image pan = panorama_image(im1, im2,2, 5, 3, 2, 10000, 30);
+	image pan2 = panorama_image(pan, im5,2, 5, 3, 2, 10000, 30);
+	image pan3 = panorama_image(pan2, im6,2, 5, 3, 2, 10000, 30);
+	image pan4 = panorama_image(pan3, im3,2, 5, 3, 2, 10000, 30);
+	free_image(im1);
+	free_image(im2);
+	free_image(im3);
+	free_image(im4);
+	free_image(im5);
+	free_image(im6);
+	free_image(pan);
+	free_image(pan2);
+	free_image(pan3);
+	free_image(pan4);
+}
+
 void run_tests()
 {
     //test_matrix();
@@ -416,6 +466,10 @@ void run_tests()
     test_structure();
     test_cornerness();
 	test_harris();
+	test_match_descriptors();
+	test_panorama();
+	test_panorama2();
+	test_panorama3();
     printf("%d tests, %d passed, %d failed\n", tests_total, tests_total-tests_fail, tests_fail);
 }
 

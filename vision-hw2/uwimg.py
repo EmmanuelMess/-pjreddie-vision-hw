@@ -185,7 +185,7 @@ def panorama_image(a, b, sigma=2, thresh=5, nms=3, inlier_thresh=2, iters=10000,
     return panorama_image_lib(a, b, sigma, thresh, nms, inlier_thresh, iters, cutoff)
 
 if __name__ == "__main__":
-    im = load_image("data/Rainier1.png")
-    detect_and_draw_corners(im, 2, 50, 3)
-    save_image(im, "corners")
-
+    im1 = load_image("data/Rainier1.png")
+    im2 = load_image("data/Rainier2.png")
+    pan = panorama_image(im1, im2, thresh=50)
+    save_image(pan, "easy_panorama")
