@@ -485,7 +485,31 @@ image panorama_image(image a, image b, float sigma, float thresh, int nms, float
 // returns: image projected onto cylinder, then flattened.
 image cylindrical_project(image im, float f)
 {
-    //TODO: project image onto a cylinder
-    image c = copy_image(im);
-    return c;
+	image result = make_image(im.w, im.h, im.c);
+
+	float xc = im.w/2.f;
+	float yc = im.h/2.f;
+
+	for (int i = 0; i < im.w; ++i) {
+		float theta = (i - xc) / f;
+		float xprime = sinf(theta);
+		float zprime = cosf(theta);
+		float resultx = f * (xprime/zprime) + xc;
+
+		for (int j = 0; j < im.h; ++j) {
+			float yprime = (j - yc)/f;
+			float resulty = f * (yprime/zprime) + yc;
+
+			for (int k = 0; k < im.c; ++k) {
+				if (resultx < 0 || resulty < 0 || im.w <= resultx || im.h <= resulty) {
+					set_pixel(result, i, j, k, 0.0f);
+				} else {
+					set_pixel(result, i, j, k, bilinear_interpolate(im, resultx, resulty, k));
+				}
+			}
+		}
+	}
+
+
+    return result;
 }
