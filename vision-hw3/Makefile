@@ -1,5 +1,5 @@
-OPENCV=0
-OPENMP=0
+OPENCV=1
+OPENMP=1
 DEBUG=0
 
 OBJ=load_image.o process_image.o args.o filter_image.o resize_image.o test.o harris_image.o matrix.o panorama_image.o flow_image.o
@@ -14,41 +14,41 @@ OBJDIR=./obj/
 CC=gcc
 AR=ar
 ARFLAGS=rcs
-OPTS=-Ofast
-LDFLAGS= -lm -pthread 
-COMMON= -Iinclude/ -Isrc/ 
+OPTS=-O3
+LDFLAGS= -lm -pthread
+COMMON= -Iinclude/ -Isrc/
 CFLAGS=-Wall -Wno-unknown-pragmas -Wfatal-errors -fPIC
 
-ifeq ($(OPENMP), 1) 
+ifeq ($(OPENMP), 1)
 CFLAGS+= -fopenmp
 endif
 
-ifeq ($(DEBUG), 1) 
+ifeq ($(DEBUG), 1)
 OPTS=-O0 -g
-COMMON= -Iinclude/ -Isrc/ 
+COMMON= -Iinclude/ -Isrc/
 else
 CFLAGS+= -flto
 endif
 
 CFLAGS+=$(OPTS)
 
-ifeq ($(OPENCV), 1) 
+ifeq ($(OPENCV), 1)
 COMMON+= -DOPENCV
 CFLAGS+= -DOPENCV
-LDFLAGS+= `pkg-config --libs opencv` 
-COMMON+= `pkg-config --cflags opencv` 
+LDFLAGS+= `pkg-config --libs opencv4`
+COMMON+= `pkg-config --cflags opencv4`
 endif
 
 EXOBJS = $(addprefix $(OBJDIR), $(EXOBJ))
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
-DEPS = $(wildcard src/*.h) Makefile 
+DEPS = $(wildcard src/*.h) Makefile
 
 all: obj $(SLIB) $(ALIB) $(EXEC)
 #all: obj $(EXEC)
 
 
 $(EXEC): $(EXOBJS) $(OBJS)
-	$(CC) $(COMMON) $(CFLAGS) $^ -o $@ $(LDFLAGS) 
+	$(CC) $(COMMON) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(ALIB): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^

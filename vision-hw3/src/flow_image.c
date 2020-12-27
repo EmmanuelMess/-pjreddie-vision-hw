@@ -47,7 +47,19 @@ void draw_line(image im, float x, float y, float dx, float dy)
 image make_integral_image(image im)
 {
     image integ = make_image(im.w, im.h, im.c);
-    // TODO: fill in the integral image
+	for (int i = 0; i < im.w; ++i) {
+		for (int j = 0; j < im.h; ++j) {
+			for (int k = 0; k < im.c; ++k) {
+				float sum = i == 0? 0.0f : get_pixel(integ, i - 1, j, k);
+
+				for (int m = 0; m <= j; ++m) {
+					sum += get_pixel(im, i, m, k);
+				}
+
+				set_pixel(integ, i, j, k, sum);
+			}
+		}
+	}
     return integ;
 }
 
@@ -57,10 +69,27 @@ image make_integral_image(image im)
 // returns: smoothed image
 image box_filter_image(image im, int s)
 {
-    int i,j,k;
+	int halfWidth = s/2;
+
+	float boxConstant = 1.0f/(s*s);
+
     image integ = make_integral_image(im);
     image S = make_image(im.w, im.h, im.c);
-    // TODO: fill in S using the integral image.
+
+	for (int i = 0; i < im.w; ++i) {
+		for (int j = 0; j < im.h; ++j) {
+			for (int k = 0; k < im.c; ++k) {
+				float a = get_pixel(integ, i - halfWidth, j - halfWidth, k);
+				float b = get_pixel(integ, i + halfWidth, j - halfWidth, k);
+				float c = get_pixel(integ, i - halfWidth, j + halfWidth, k);
+				float d = get_pixel(integ, i + halfWidth, j + halfWidth, k);
+
+				float boxSum = d - b - c + a;
+				set_pixel(S, i, j, k, boxConstant * boxSum);
+			}
+		}
+	}
+
     return S;
 }
 
@@ -72,7 +101,6 @@ image box_filter_image(image im, int s)
 //          3rd channel is IxIy, 4th channel is IxIt, 5th channel is IyIt.
 image time_structure_matrix(image im, image prev, int s)
 {
-    int i;
     int converted = 0;
     if(im.c == 3){
         converted = 1;
@@ -80,15 +108,45 @@ image time_structure_matrix(image im, image prev, int s)
         prev = rgb_to_grayscale(prev);
     }
 
-    // TODO: calculate gradients, structure components, and smooth them
+    image S = make_image(im.w, im.h, 5);
 
+	image gxFilter = make_gx_filter();
+	image Ix = convolve_image(im, gxFilter, 0);
+	image Ix_2 = mult_image(Ix, Ix);
+	insert_channel(S, Ix_2, 0);
+	free_image(gxFilter);
+	free_image(Ix_2);
 
+	image gyFilter = make_gy_filter();
+	image Iy = convolve_image(im, gyFilter, 0);
+	image Iy_2 = mult_image(Iy, Iy);
+	insert_channel(S, Iy_2, 1);
+	free_image(gyFilter);
+	free_image(Iy_2);
 
+	image IxIy = mult_image(Ix, Iy);
+	insert_channel(S, IxIy, 2);
+	free_image(IxIy);
+
+	image It = sub_image(im, prev);
+	image IxIt = mult_image(Ix, It);
+	insert_channel(S, IxIt, 3);
+	free_image(Ix);
+	free_image(IxIt);
+
+	image IyIt = mult_image(Iy, It);
+	insert_channel(S, IyIt, 4);
+	free_image(Iy);
+	free_image(It);
+	free_image(IyIt);
+
+	image box = box_filter_image(S, s);
+	free_image(S);
 
     if(converted){
         free_image(im); free_image(prev);
     }
-    return S;
+    return box;
 }
 
 // Calculate the velocity given a structure image
@@ -107,9 +165,24 @@ image velocity_image(image S, int stride)
             float Ixt = S.data[i + S.w*j + 3*S.w*S.h];
             float Iyt = S.data[i + S.w*j + 4*S.w*S.h];
 
-            // TODO: calculate vx and vy using the flow equation
-            float vx = 0;
-            float vy = 0;
+            M.data[0][0] = Ixx;
+            M.data[0][1] = Ixy;
+            M.data[1][0] = Ixy;
+            M.data[1][1] = Iyy;
+
+            matrix invM = matrix_invert(M);
+	        float vx;
+	        float vy;
+
+            if(invM.rows == 0) {
+            	vx = 0;
+            	vy = 0;
+            } else {
+	            vx = invM.data[0][0] * -Ixt + invM.data[0][1] * -Iyt;
+	            vy = invM.data[1][0] * -Ixt + invM.data[1][1] * -Iyt;
+            }
+
+            free_matrix(invM);
 
             set_pixel(v, i/stride, j/stride, 0, vx);
             set_pixel(v, i/stride, j/stride, 1, vy);
@@ -159,7 +232,7 @@ void constrain_image(image im, float v)
 // returns: velocity matrix
 image optical_flow_images(image im, image prev, int smooth, int stride)
 {
-    image S = time_structure_matrix(im, prev, smooth);   
+    image S = time_structure_matrix(im, prev, smooth);
     image v = velocity_image(S, stride);
     constrain_image(v, 6);
     image vs = smooth_image(v, 2);
@@ -174,6 +247,7 @@ image optical_flow_images(image im, image prev, int smooth, int stride)
 // int div: downsampling factor for images from webcam
 void optical_flow_webcam(int smooth, int stride, int div)
 {
+#ifdef __cplusplus
 #ifdef OPENCV
     CvCapture * cap;
     cap = cvCaptureFromCAM(0);
@@ -202,5 +276,8 @@ void optical_flow_webcam(int smooth, int stride, int div)
     }
 #else
     fprintf(stderr, "Must compile with OpenCV\n");
+#endif
+#else
+	fprintf(stderr, "Must compile with C++\n");
 #endif
 }

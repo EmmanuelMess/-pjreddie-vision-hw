@@ -108,7 +108,7 @@ image optical_flow_images(image im, image prev, int smooth, int stride);
 void optical_flow_webcam(int smooth, int stride, int div);
 void draw_flow(image im, image v, float scale);
 
-#ifndef __cplusplus
+#ifdef __cplusplus
     #ifdef OPENCV
         #include "opencv2/highgui/highgui_c.h"
         #include "opencv2/imgproc/imgproc_c.h"

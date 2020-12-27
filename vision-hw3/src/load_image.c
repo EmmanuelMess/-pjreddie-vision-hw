@@ -101,6 +101,7 @@ void free_image(image im)
     free(im.data);
 }
 
+#ifdef __cplusplus
 #ifdef OPENCV
 
 void rgbgr_image(image im)
@@ -177,4 +178,5 @@ int show_image(image im, const char *name, int ms)
     return cvWaitKey(ms);
 }
 
+#endif
 #endif
