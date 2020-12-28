@@ -38,7 +38,9 @@ image convolve_image(image im, image filter, int preserve)
 		if(preserve) {
 			image result = make_image(im.w, im.h, im.c);
 
+#pragma omp parallel for
 			for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 				for (int j = 0; j < im.h; ++j) {
 					for (int k = 0; k < im.c; ++k) {
 						float sum = 0;
@@ -58,7 +60,9 @@ image convolve_image(image im, image filter, int preserve)
 		} else {
 			image result = make_image(im.w, im.h, 1);
 
+#pragma omp parallel for
 			for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 				for (int j = 0; j < im.h; ++j) {
 					float sum = 0;
 					for (int k = 0; k < im.c; ++k) {
@@ -78,7 +82,9 @@ image convolve_image(image im, image filter, int preserve)
 		if(preserve) {
 			image result = make_image(im.w, im.h, im.c);
 
+#pragma omp parallel for
 			for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 				for (int j = 0; j < im.h; ++j) {
 					for (int k = 0; k < im.c; ++k) {
 						float sum = 0;
@@ -98,7 +104,9 @@ image convolve_image(image im, image filter, int preserve)
 		} else {
 			image result = make_image(im.w, im.h, 1);
 
+#pragma omp parallel for
 			for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 				for (int j = 0; j < im.h; ++j) {
 					float sum = 0;
 
@@ -291,7 +299,10 @@ image mult_image(image a, image b)
 {
 	assert(a.w == b.w && a.h == b.h && a.c == b.c);
 	image result = make_image(a.w, a.h, a.c);
+
+#pragma omp parallel for
 	for (int i = 0; i < a.w; ++i) {
+#pragma omp parallel for
 		for (int j = 0; j < a.h; ++j) {
 			for (int k = 0; k < a.c; ++k) {
 				set_pixel(result, i, j, k, get_pixel(a, i, j, k) * get_pixel(b, i, j, k));

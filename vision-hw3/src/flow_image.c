@@ -47,11 +47,15 @@ void draw_line(image im, float x, float y, float dx, float dy)
 image make_integral_image(image im)
 {
     image integ = make_image(im.w, im.h, im.c);
+
+#pragma omp parallel for
 	for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 		for (int j = 0; j < im.h; ++j) {
 			for (int k = 0; k < im.c; ++k) {
 				float sum = i == 0? 0.0f : get_pixel(integ, i - 1, j, k);
 
+#pragma omp parallel for
 				for (int m = 0; m <= j; ++m) {
 					sum += get_pixel(im, i, m, k);
 				}
@@ -76,7 +80,9 @@ image box_filter_image(image im, int s)
     image integ = make_integral_image(im);
     image S = make_image(im.w, im.h, im.c);
 
+#pragma omp parallel for
 	for (int i = 0; i < im.w; ++i) {
+#pragma omp parallel for
 		for (int j = 0; j < im.h; ++j) {
 			for (int k = 0; k < im.c; ++k) {
 				float a = get_pixel(integ, i - halfWidth, j - halfWidth, k);
@@ -139,6 +145,9 @@ image time_structure_matrix(image im, image prev, int s)
 	free_image(Iy);
 	free_image(It);
 	free_image(IyIt);
+
+	//image smoothed = smooth_image(S, 2);
+	//free_image(S);
 
 	image box = box_filter_image(S, s);
 	free_image(S);
