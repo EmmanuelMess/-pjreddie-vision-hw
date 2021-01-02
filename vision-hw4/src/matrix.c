@@ -85,9 +85,12 @@ matrix matrix_mult_matrix(matrix a, matrix b)
     assert(a.cols == b.rows);
     int i, j, k;
     matrix p = make_matrix(a.rows, b.cols);
-    for(i = 0; i < p.rows; ++i){
-        for(j = 0; j < p.cols; ++j){
-            for(k = 0; k < a.cols; ++k){
+#pragma omp parallel for
+	for(i = 0; i < p.rows; ++i){
+#pragma omp parallel for
+		for(j = 0; j < p.cols; ++j){
+#pragma omp parallel for
+			for(k = 0; k < a.cols; ++k){
                 p.data[i][j] += a.data[i][k]*b.data[k][j];
             }
         }
@@ -145,9 +148,11 @@ matrix transpose_matrix(matrix m)
     t.data = calloc(t.rows, sizeof(double *));
     t.shallow = 0;
     int i, j;
-    for(i = 0; i < t.rows; ++i){
+#pragma omp parallel for
+	for(i = 0; i < t.rows; ++i){
         t.data[i] = calloc(t.cols, sizeof(double));
-        for(j = 0; j < t.cols; ++j){
+#pragma omp parallel for
+		for(j = 0; j < t.cols; ++j){
             t.data[i][j] = m.data[j][i];
         }
     }
@@ -157,8 +162,10 @@ matrix transpose_matrix(matrix m)
 void scale_matrix(matrix m, double s)
 {
     int i, j;
-    for(i = 0; i < m.rows; ++i){
-        for(j =0 ; j < m.cols; ++j){
+#pragma omp parallel for
+	for(i = 0; i < m.rows; ++i){
+#pragma omp parallel for
+		for(j =0 ; j < m.cols; ++j){
             m.data[i][j] *= s;
         }
     }
