@@ -24,6 +24,6 @@ add_executable(vision-hw4
     src/stb_image.h
     src/stb_image_write.h
     src/test.c
-    src/test.h)
+    src/test.h src/classifier.h)
 
 target_link_libraries(vision-hw4 m)

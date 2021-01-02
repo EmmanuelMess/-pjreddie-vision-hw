@@ -6,6 +6,7 @@
 #include "image.h"
 #include "test.h"
 #include "args.h"
+#include "classifier.h"
 
 void feature_normalize2(image im)
 {
@@ -384,30 +385,47 @@ void test_cornerness()
     free_image(gt);
 }
 
+void test_nn() {
+	data train = load_classification_data("mnist.train", "mnist.labels", 1);
+	data test  = load_classification_data("mnist.test", "mnist.labels", 1);
+
+	layer l = make_layer(train.X.cols, train.y.cols, SOFTMAX);
+
+	model m = {};
+	m.n = 1;
+	m.layers = &l;
+
+	train_model(m, train, 128, 1000, 10, 0.9, 0.0);
+
+	accuracy_model(m, train);
+	accuracy_model(m, test);
+}
+
 void run_tests()
 {
     //test_matrix();
-    test_get_pixel();
-    test_set_pixel();
-    test_copy();
-    test_shift();
-    test_grayscale();
-    test_rgb_to_hsv();
-    test_hsv_to_rgb();
-    test_nn_resize();
-    test_bl_resize();
-    test_multiple_resize();
-    test_gaussian_filter();
-    test_sharpen_filter();
-    test_emboss_filter();
-    test_highpass_filter();
-    test_convolution();
-    test_gaussian_blur();
-    test_hybrid_image();
-    test_frequency_image();
-    test_sobel();
-    test_structure();
-    test_cornerness();
+    //test_get_pixel();
+    //test_set_pixel();
+    //test_copy();
+    //test_shift();
+    //test_grayscale();
+    //test_rgb_to_hsv();
+    //test_hsv_to_rgb();
+    //test_nn_resize();
+    //test_bl_resize();
+    //test_multiple_resize();
+    //test_gaussian_filter();
+    //test_sharpen_filter();
+    //test_emboss_filter();
+    //test_highpass_filter();
+    //test_convolution();
+    //test_gaussian_blur();
+    //test_hybrid_image();
+    //test_frequency_image();
+    //test_sobel();
+    //test_structure();
+    //test_cornerness();
+    test_nn();
     printf("%d tests, %d passed, %d failed\n", tests_total, tests_total-tests_fail, tests_fail);
 }
 
