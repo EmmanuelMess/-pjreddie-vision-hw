@@ -30,18 +30,26 @@ class BaseModel(nn.Module):
         lr = args.lr  # TODO: Implement decreasing learning rate's rules
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
-       
 
 
 class LazyNet(BaseModel):
     def __init__(self):
         super(LazyNet, self).__init__()
-        # TODO: Define model here
+        # an affine operation: y = Wx + b
+        self.fc1 = nn.Linear(3*32*32, 10)  # 6*6 from image dimension
 
     def forward(self, x):
-        # TODO: Implement forward pass for LazyNet
+        x = x.view(-1, self.num_flat_features(x))
+        x = self.fc1(x)
         return x
-        
+
+    def num_flat_features(self, x):
+        size = x.size()[1:]  # all dimensions except the batch dimension
+        num_features = 1
+        for s in size:
+            num_features *= s
+        return num_features
+
 
 class BoringNet(BaseModel):
     def __init__(self):
