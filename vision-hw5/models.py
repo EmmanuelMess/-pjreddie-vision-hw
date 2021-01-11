@@ -40,7 +40,7 @@ class LazyNet(BaseModel):
 
     def forward(self, x):
         x = x.view(-1, self.num_flat_features(x))
-        x = self.fc1(x)
+        x = F.relu(self.fc1(x))
         return x
 
     def num_flat_features(self, x):
@@ -54,11 +54,23 @@ class LazyNet(BaseModel):
 class BoringNet(BaseModel):
     def __init__(self):
         super(BoringNet, self).__init__()
-        # TODO: Define model here
+        self.fc1 = nn.Linear(3 * 32 * 32, 120)  # 6*6 from image dimension
+        self.fc2 = nn.Linear(120, 84)  # 6*6 from image dimension
+        self.fc3 = nn.Linear(84, 10)  # 6*6 from image dimension
 
     def forward(self, x):
-        # TODO: Implement forward pass for BoringNet
+        x = x.view(-1, self.num_flat_features(x))
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
         return x
+
+    def num_flat_features(self, x):
+        size = x.size()[1:]  # all dimensions except the batch dimension
+        num_features = 1
+        for s in size:
+            num_features *= s
+        return num_features
 
 
 class CoolNet(BaseModel):
