@@ -5,12 +5,14 @@ import numpy as np
 import models
 import torch
 import pdb
-
+from torchsummary import summary
 
 def train(net, dataloader, optimizer, criterion, epoch):
 
     running_loss = 0.0
     total_loss = 0.0
+
+    #summary(net, (3, 32, 32))
 
     for i, data in enumerate(dataloader.trainloader, 0):
         # get the inputs
