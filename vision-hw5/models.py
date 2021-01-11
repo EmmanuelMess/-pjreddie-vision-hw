@@ -35,8 +35,7 @@ class BaseModel(nn.Module):
 class LazyNet(BaseModel):
     def __init__(self):
         super(LazyNet, self).__init__()
-        # an affine operation: y = Wx + b
-        self.fc1 = nn.Linear(3*32*32, 10)  # 6*6 from image dimension
+        self.fc1 = nn.Linear(3*32*32, 10)
 
     def forward(self, x):
         x = x.view(-1, self.num_flat_features(x))
@@ -54,9 +53,9 @@ class LazyNet(BaseModel):
 class BoringNet(BaseModel):
     def __init__(self):
         super(BoringNet, self).__init__()
-        self.fc1 = nn.Linear(3 * 32 * 32, 120)  # 6*6 from image dimension
-        self.fc2 = nn.Linear(120, 84)  # 6*6 from image dimension
-        self.fc3 = nn.Linear(84, 10)  # 6*6 from image dimension
+        self.fc1 = nn.Linear(3 * 32 * 32, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
 
     def forward(self, x):
         x = x.view(-1, self.num_flat_features(x))
@@ -76,8 +75,28 @@ class BoringNet(BaseModel):
 class CoolNet(BaseModel):
     def __init__(self):
         super(CoolNet, self).__init__()
-        # TODO: Define model here
+
+        self.conv1 = nn.Conv2d(3, 16, 5, padding=2)
+        self.conv2 = nn.Conv2d(16, 20, 5, padding=2)
+        self.conv3 = nn.Conv2d(20, 20, 5, padding=2)
+
+        self.fc1 = nn.Linear(4 * 4 * 20, 10)
 
     def forward(self, x):
-        # TODO: Implement forward pass for CoolNet
+        x = F.relu(self.conv1(x))
+        x = F.avg_pool2d(x, 2)
+        x = F.relu(self.conv2(x))
+        x = F.avg_pool2d(x, 2)
+        x = F.relu(self.conv3(x))
+        x = F.avg_pool2d(x, 2)
+
+        x = x.view(-1, self.num_flat_features(x))
+        x = F.relu(self.fc1(x))
         return x
+
+    def num_flat_features(self, x):
+        size = x.size()[1:]  # all dimensions except the batch dimension
+        num_features = 1
+        for s in size:
+            num_features *= s
+        return num_features
