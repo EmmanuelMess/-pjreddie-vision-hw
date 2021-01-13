@@ -15,6 +15,7 @@ class BaseModel(nn.Module):
         ts = time.time()
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d_%H:%M:%S_log.txt')
         self.logFile = open('logs/' + st, 'w')
+        self.lr = 0
 
     def log(self, str):
         print(str)
@@ -27,9 +28,14 @@ class BaseModel(nn.Module):
         return optim.SGD(self.parameters(), lr=0.001)
 
     def adjust_learning_rate(self, optimizer, epoch, args):
-        lr = args.lr  # TODO: Implement decreasing learning rate's rules
+        if self.lr == 0:
+            self.lr = args.lr
+        elif divmod(epoch, 50)[1] == 0:
+            self.lr *= 0.9
+
+        print(self.lr)
         for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+            param_group['lr'] = self.lr
 
 
 class LazyNet(BaseModel):
