@@ -21,3 +21,19 @@ But the amount of plasticity seems to still be too low.
 
 # CoolNet
 
+Using the layers proposed by [Karpathy](https://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html):
+* Conv 5x5
+* Max pool 2x2 stride 2
+* Conv 5x5
+* Max pool 2x2 stride 2
+* Conv 5x5
+* Max pool 2x2 stride 2
+* linear 4*4*20x10 (RELU)
+
+This seems plastic enough to learn to classify better than LazyNet and BoringNet.
+But it does take around 4hs to train 200 epochs on Google Colab on CPU.
+
+## 50 Epochs default hiperparams
+<img src="img/coolnet/basic/acc.png" />
+
+Training halted after 30 epochs as it seemed to be overfitting, although the test accuracy is much better than before at 70%.
