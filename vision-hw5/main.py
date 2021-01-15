@@ -102,6 +102,6 @@ def main():
     print(net.logFile.name)
 
 if __name__ == '__main__':
-    wandb.login()
-    wandb.init(project='test-cifar10')
+    #wandb.login()
+    #wandb.init(project='test-cifar10')
     main()
