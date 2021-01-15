@@ -6,6 +6,7 @@ import models
 import torch
 import pdb
 from torchsummary import summary
+import wandb
 
 def train(net, dataloader, optimizer, criterion, epoch):
 
@@ -37,6 +38,8 @@ def train(net, dataloader, optimizer, criterion, epoch):
 
     net.log('Final Summary:   loss: %.3f' %
           (total_loss / i))
+
+    wandb.log({"loss": total_loss / i})
 
 
 def test(net, dataloader, tag=''):
@@ -90,7 +93,7 @@ def main():
     for epoch in range(args.epochs):  # loop over the dataset multiple times
         net.adjust_learning_rate(optimizer, epoch, args)
         train(net, cifarLoader, optimizer, criterion, epoch)
-        if epoch % 1 == 0: # Comment out this part if you want a faster training
+        if epoch % 50 == 0: # Comment out this part if you want a faster training
             test(net, cifarLoader, 'Train')
             test(net, cifarLoader, 'Test')
 
@@ -99,4 +102,6 @@ def main():
     print(net.logFile.name)
 
 if __name__ == '__main__':
+    wandb.login()
+    wandb.init(project='test-cifar10')
     main()
