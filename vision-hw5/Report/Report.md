@@ -77,3 +77,13 @@ The learning rate 0.01 seems to reach the 70% test accuracy mark fast enough, wh
 
 Loss reaches ~0.6 which seems ok.
 
+## Reducing learning rate
+
+Starting at 0.01 and slowly reducing every 50 epochs seems like a sensible idea, but it seems to worsen the test accuracy:
+
+<img src="img/coolnet/reducing lr/acc.png" />
+
+This might indicate that the network plasticity has reached its limit; that all the weights are stuck in a local minima; or that the training data is too small.
+
+The third seems to be more accurate, see "Augmentation" lower down.
+
