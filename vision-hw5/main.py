@@ -100,7 +100,7 @@ def main():
     for epoch in range(args.epochs):  # loop over the dataset multiple times
         net.adjust_learning_rate(optimizer, epoch, args)
         train(net, cifarLoader, optimizer, criterion, epoch)
-        if epoch % 50 == 0: # Comment out this part if you want a faster training
+        if epoch % 20 == 0: # Comment out this part if you want a faster training
             test(net, cifarLoader, 'Train')
             test(net, cifarLoader, 'Test')
 
