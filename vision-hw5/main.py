@@ -1,12 +1,10 @@
-from utils import argParser
-from dataloader import CifarLoader
-import matplotlib.pyplot as plt
-import numpy as np
-import models
+import os
+
 import torch
-import pdb
-from torchsummary import summary
 import wandb
+
+from dataloader import CifarLoader
+from utils import argParser
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -94,17 +92,20 @@ def main():
     print('The log is recorded in ')
     print(net.logFile.name)
 
+    if os.path.isfile('model.pth'):
+        net.load_state_dict(torch.load('model.pth'))
+
     criterion = net.criterion()
     optimizer = net.optimizer()
 
     for epoch in range(args.epochs):  # loop over the dataset multiple times
         net.adjust_learning_rate(optimizer, epoch, args)
         train(net, cifarLoader, optimizer, criterion, epoch)
-        if epoch % 20 == 0: # Comment out this part if you want a faster training
+        if epoch % 10 == 0: # Comment out this part if you want a faster training
             test(net, cifarLoader, 'Train')
             test(net, cifarLoader, 'Test')
 
-
+    torch.save(net.state_dict(), 'model.pth')
     print('The log is recorded in ')
     print(net.logFile.name)
 

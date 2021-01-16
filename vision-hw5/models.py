@@ -1,11 +1,11 @@
+import datetime
+import os
+import time
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import os
-import datetime
-import pdb
-import time
-import torchvision.models as torchmodels
+
 
 class BaseModel(nn.Module):
     def __init__(self):
@@ -22,7 +22,7 @@ class BaseModel(nn.Module):
         self.logFile.write(str + '\n')
 
     def criterion(self):
-        return nn.CrossEntropyLoss()
+        return nn.NLLLoss()
 
     def optimizer(self):
         return optim.SGD(self.parameters(), lr=0.001)
@@ -97,7 +97,7 @@ class CoolNet(BaseModel):
         x = F.avg_pool2d(x, 2)
 
         x = x.view(-1, self.num_flat_features(x))
-        x = F.softmax(self.fc1(x), dim=1)
+        x = F.log_softmax(self.fc1(x), dim=1)
         return x
 
     def num_flat_features(self, x):
