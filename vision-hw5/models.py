@@ -97,7 +97,7 @@ class CoolNet(BaseModel):
         x = F.avg_pool2d(x, 2)
 
         x = x.view(-1, self.num_flat_features(x))
-        x = F.relu(self.fc1(x))
+        x = F.softmax(self.fc1(x), dim=1)
         return x
 
     def num_flat_features(self, x):
