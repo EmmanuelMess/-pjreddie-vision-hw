@@ -60,6 +60,8 @@ def test(net, dataloader, tag=''):
     net.log('%s Accuracy of the network: %d %%' % (tag,
         100 * correct / total))
 
+    wandb.log({'{} Accuracy of the network'.format("tag"): correct / total})
+
     class_correct = list(0. for i in range(10))
     class_total = list(0. for i in range(10))
     with torch.no_grad():
@@ -77,6 +79,8 @@ def test(net, dataloader, tag=''):
     for i in range(10):
         net.log('%s Accuracy of %5s : %2d %%' % (
             tag, dataloader.classes[i], 100 * class_correct[i] / class_total[i]))
+
+        wandb.log({'{} Accuracy of {}'.format("tag", dataloader.classes[i]): class_correct[i] / class_total[i]})
 
 def main():
 
@@ -102,6 +106,5 @@ def main():
     print(net.logFile.name)
 
 if __name__ == '__main__':
-    #wandb.login()
-    #wandb.init(project='test-cifar10')
+    wandb.init(project='test-cifar10')
     main()
