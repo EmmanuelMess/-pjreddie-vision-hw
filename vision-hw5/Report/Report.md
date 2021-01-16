@@ -121,3 +121,7 @@ It is clear the network is overfitting again.
 Instead of RELU using sofmax allows the network to fail miserably:
 
 <img src="img/coolnet/softmax/acc.png" />
+
+### Negative Log Likelihood and log softmax
+
+Changing the last layer to log softmax and using NLL seems to improve the test accuracy to >70% after 33 epochs. 
