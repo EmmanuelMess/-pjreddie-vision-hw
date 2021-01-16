@@ -8,7 +8,10 @@ import pdb
 from torchsummary import summary
 import wandb
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 def train(net, dataloader, optimizer, criterion, epoch):
+    net.to(device)
 
     running_loss = 0.0
     total_loss = 0.0
@@ -17,7 +20,7 @@ def train(net, dataloader, optimizer, criterion, epoch):
 
     for i, data in enumerate(dataloader.trainloader, 0):
         # get the inputs
-        inputs, labels = data
+        inputs, labels = data[0].to(device), data[1].to(device)
 
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -51,7 +54,7 @@ def test(net, dataloader, tag=''):
         dataTestLoader = dataloader.testloader
     with torch.no_grad():
         for data in dataTestLoader:
-            images, labels = data
+            images, labels = data[0].to(device), data[1].to(device)
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
@@ -61,12 +64,12 @@ def test(net, dataloader, tag=''):
         100 * correct / total))
 
     wandb.log({'{} Accuracy of the network'.format("tag"): correct / total})
-
+"""
     class_correct = list(0. for i in range(10))
     class_total = list(0. for i in range(10))
     with torch.no_grad():
         for data in dataTestLoader:
-            images, labels = data
+            images, labels = data[0].to(device), data[1].to(device)
             outputs = net(images)
             _, predicted = torch.max(outputs, 1)
             c = (predicted == labels).squeeze()
@@ -81,7 +84,7 @@ def test(net, dataloader, tag=''):
             tag, dataloader.classes[i], 100 * class_correct[i] / class_total[i]))
 
         wandb.log({'{} Accuracy of {}'.format("tag", dataloader.classes[i]): class_correct[i] / class_total[i]})
-
+"""
 def main():
 
     args = argParser()
