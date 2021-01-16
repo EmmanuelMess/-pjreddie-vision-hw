@@ -85,5 +85,33 @@ Starting at 0.01 and slowly reducing every 50 epochs seems like a sensible idea,
 
 This might indicate that the network plasticity has reached its limit; that all the weights are stuck in a local minima; or that the training data is too small.
 
-The third seems to be more accurate, see "Augmentation" lower down.
+The third seems to be more accurate, see "Data Augmentation" lower down.
 
+## Data Augmentation
+
+Adding random transformation allow for us to be able to create more images from the existing 60k.
+
+The transformations used are as follows:
+* Random horizontal flipping (x2)
+* Random affine transformation with rotation (>x2), horizontal translation (x4), vertical translation (x4), scaling (>x3)
+* Random normalization: standard deviation can be 0.5, 0.7 or 0.9 (x3)
+
+The last one was added to change the color of all pixels but still have the same image.
+
+Here are a few transformed images:
+<img src="img/coolnet/augmentation/example.png" />
+
+
+### Results
+
+Training for 200 epochs with reducing lr (10% less every 50 epochs):
+
+<img src="img/coolnet/augmentation/acc.png" />
+
+The resolution of the data is 50 epochs = one data point to accelerate the training.
+
+The loss keeps going down during the training:
+
+<img src="img/coolnet/augmentation/loss.png" />
+
+It is clear the network is overfitting again.
