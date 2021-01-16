@@ -115,3 +115,9 @@ The loss keeps going down during the training:
 <img src="img/coolnet/augmentation/loss.png" />
 
 It is clear the network is overfitting again.
+
+### Changing the last layer of the network to softmax
+
+Instead of RELU using sofmax allows the network to fail miserably:
+
+<img src="img/coolnet/softmax/acc.png" />
