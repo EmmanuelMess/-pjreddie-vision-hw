@@ -33,7 +33,47 @@ Using the layers proposed by [Karpathy](https://cs.stanford.edu/people/karpathy/
 This seems plastic enough to learn to classify better than LazyNet and BoringNet.
 But it does take around 4hs to train 200 epochs on Google Colab on CPU.
 
-## 50 Epochs default hiperparams
+## 50 epochs default hiperparams
 <img src="img/coolnet/basic/acc.png" />
 
-Training halted after 30 epochs as it seemed to be overfitting, although the test accuracy is much better than before at 70%.
+Training seemed to be overfitting, although the test accuracy is much better than before at 70%.
+
+## Learning rates
+
+### 50 epochs learning rate 10
+
+This broke completely, the network went to nan values very fast.
+
+### 50 epochs learning rate 0.1
+
+<img src="img/coolnet/lr 0.1/acc.png" />
+
+Test accuracy goes down when compared to the default lr of 0.01. 
+This might be because of 'skipping' over a region of lower loss, as the loss gets stuck around 1.2:
+
+<img src="img/coolnet/lr 0.1/loss.png" />
+
+Compared to default run with lr 0.01:
+
+<img src="img/coolnet/basic/loss.png" />
+
+### 50 epochs learning rate 0.01
+
+This is the default, see "50 epochs default hiperparams"
+
+### 50 epochs learning rate 0.0001
+
+Very steady progress, although very slow:
+
+<img src="img/coolnet/lr 0.0001/acc.png" />
+
+It never even reaches 70% test accuracy.
+
+### 0.01 seems best
+
+The learning rate 0.01 seems to reach the 70% test accuracy mark fast enough, while not skipping over big areas of low loss:
+
+<img src="img/coolnet/basic/loss.png" />
+
+Loss reaches ~0.6 which seems ok.
+
